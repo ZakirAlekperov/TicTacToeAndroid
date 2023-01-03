@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TicTacToe</string>
+    <string name="title_new_game">Новая игра</string>
+    <string name="title_continue_game">Продолжить игру</string>
+    <string name="title_setting_game">Настройки</string>
+    <string name="title_save_and_exit">Сохранить и выйти</string>
+</resources>
