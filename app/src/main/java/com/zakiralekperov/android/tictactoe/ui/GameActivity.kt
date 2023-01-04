@@ -1,4 +1,4 @@
-package com.zakiralekperov.android.tictactoe
+package com.zakiralekperov.android.tictactoe.ui
 
 import android.app.Dialog
 import android.content.Intent
@@ -10,7 +10,9 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
+import com.zakiralekperov.android.tictactoe.R
 import com.zakiralekperov.android.tictactoe.databinding.ActivityGameBinding
 
 class GameActivity : AppCompatActivity() {
@@ -35,31 +37,31 @@ class GameActivity : AppCompatActivity() {
         }
 
         binding.cell11.setOnClickListener{
-            makeStepOfUser(1,1)
+            makeStepOfUser(0,0)
         }
         binding.cell12.setOnClickListener{
-            makeStepOfUser(1,2)
+            makeStepOfUser(0,1)
         }
         binding.cell13.setOnClickListener{
-            makeStepOfUser(1,3)
+            makeStepOfUser(0,2)
         }
         binding.cell21.setOnClickListener{
-            makeStepOfUser(2,1)
+            makeStepOfUser(1,0)
         }
         binding.cell22.setOnClickListener{
-            makeStepOfUser(2,2)
+            makeStepOfUser(1,1)
         }
         binding.cell23.setOnClickListener{
-            makeStepOfUser(2,3)
+            makeStepOfUser(1,2)
         }
         binding.cell31.setOnClickListener{
-            makeStepOfUser(3,1)
+            makeStepOfUser(2,0)
         }
         binding.cell32.setOnClickListener{
-            makeStepOfUser(3,2)
+            makeStepOfUser(2,1)
         }
         binding.cell33.setOnClickListener{
-            makeStepOfUser(3,3)
+            makeStepOfUser(2,2)
         }
 
 
@@ -113,15 +115,15 @@ class GameActivity : AppCompatActivity() {
         }
 
         when(position){
-            "11" -> binding.cell11.setImageResource(resId)
-            "12" -> binding.cell12.setImageResource(resId)
-            "13" -> binding.cell13.setImageResource(resId)
-            "21" -> binding.cell21.setImageResource(resId)
-            "22" -> binding.cell22.setImageResource(resId)
-            "23" -> binding.cell23.setImageResource(resId)
-            "31" -> binding.cell31.setImageResource(resId)
-            "32" -> binding.cell32.setImageResource(resId)
-            "33" -> binding.cell33.setImageResource(resId)
+            "00" -> binding.cell11.setImageResource(resId)
+            "01" -> binding.cell12.setImageResource(resId)
+            "02" -> binding.cell13.setImageResource(resId)
+            "10" -> binding.cell21.setImageResource(resId)
+            "11" -> binding.cell22.setImageResource(resId)
+            "12" -> binding.cell23.setImageResource(resId)
+            "20" -> binding.cell31.setImageResource(resId)
+            "21" -> binding.cell32.setImageResource(resId)
+            "22" -> binding.cell33.setImageResource(resId)
         }
     }
 
@@ -187,7 +189,7 @@ class GameActivity : AppCompatActivity() {
         TODO("Not yet implemented")
     }
 
-    private fun checkGameField(row: Int, column: Int, symbol: String): StatusInfo{
+    private fun checkGameField(x: Int, y: Int, symbol: String): StatusInfo {
         var row =0
         var column = 0
         var leftDiagonal = 0
@@ -195,13 +197,13 @@ class GameActivity : AppCompatActivity() {
         var size = gameField.size
 
         for(i  in (0..2)){
-            if(gameField[row][i] == symbol)
+            if(gameField[x][i] == symbol)
                 column++
-            else if(gameField[i][column] == symbol)
+            if(gameField[i][y] == symbol)
                 row++
-            else if (gameField[i][i] == symbol)
+            if (gameField[i][i] == symbol)
                 leftDiagonal++
-            else if(gameField[i][size-i-1] == symbol)
+            if(gameField[i][size-i-1] == symbol)
                 rightDiagonal++
         }
 
@@ -251,8 +253,6 @@ class GameActivity : AppCompatActivity() {
             }
            else -> StatusInfo(false, "")
         }
-
-
     }
 
     data class StatusInfo(val status: Boolean, val side: String)
@@ -312,7 +312,7 @@ class GameActivity : AppCompatActivity() {
         toSettings.setOnClickListener{
             dialog.hide()
             val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
+            resultLauncher.launch(intent)
 
             settingsInfo = getSettingsInfo()
             setVolumeMediaPlayer(settingsInfo.soundValue)
@@ -370,13 +370,29 @@ class GameActivity : AppCompatActivity() {
 
     private fun getSettingsInfo(): SettingsActivity.SettingsInfo {
         with(getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE)){
-            val soundValue = getInt(SettingsActivity.PREF_SOUND_VALUE, 0)
+            val soundValue = getInt(SettingsActivity.PREF_SOUND_VALUE, 50)
             val level = getInt(SettingsActivity.PREF_LEVEL, 0)
-            val rules = getInt(SettingsActivity.PREF_RULES, 0)
+            val rules = getInt(SettingsActivity.PREF_RULES, 7)
 
             return SettingsActivity.SettingsInfo(soundValue, level, rules)
         }
     }
+
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == REQUEST_POPUP_MENU) {
+            if (result.resultCode == RESULT_OK){
+                settingsInfo = getSettingsInfo()
+
+                mediaPlayer = MediaPlayer.create(this, R.raw.minus)
+                mediaPlayer.isLooping = true
+                setVolumeMediaPlayer(settingsInfo.soundValue)
+
+                mediaPlayer.start()
+            }
+        }
+    }
+
 
     companion object{
         const val STATUS_PLAYER_WIN = 1
@@ -385,5 +401,7 @@ class GameActivity : AppCompatActivity() {
 
         const val PREF_TIME = "pref_time"
         const val PREF_GAME_FIELD = "pref_game_field"
+
+        const val REQUEST_POPUP_MENU = 123
     }
 }

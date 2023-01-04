@@ -1,10 +1,10 @@
-package com.zakiralekperov.android.tictactoe
+package com.zakiralekperov.android.tictactoe.ui
 
-import android.media.audiofx.Equalizer
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
+import androidx.appcompat.app.AppCompatActivity
+import com.zakiralekperov.android.tictactoe.R
 import com.zakiralekperov.android.tictactoe.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
@@ -24,7 +24,7 @@ class SettingsActivity : AppCompatActivity() {
 
         currentSoundValue = data.soundValue
         currentLevel =data.level
-        currentLevel = data.rules
+        currentRules = data.rules
 
         when(currentRules){
             1 -> binding.checkBoxVertical.isChecked = true
@@ -57,7 +57,9 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.infoLevel.text = resources.getStringArray(R.array.game_level)[currentLevel]
         binding.soundBar.progress  = currentSoundValue
-
+        binding.toBack.setOnClickListener{
+            onBackPressed()
+        }
 
         binding.prevLevel.setOnClickListener{
             currentLevel--
@@ -73,6 +75,7 @@ class SettingsActivity : AppCompatActivity() {
             updateLevel(currentLevel)
         }
 
+
         binding.nextLevel.setOnClickListener{
             currentLevel++
 
@@ -87,6 +90,7 @@ class SettingsActivity : AppCompatActivity() {
             updateLevel(currentLevel)
         }
 
+
         binding.soundBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 currentSoundValue = progress
@@ -97,10 +101,10 @@ class SettingsActivity : AppCompatActivity() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                updateSoundLevel(currentSoundValue)
+               // updateSoundLevel(currentSoundValue)
             }
         })
-
+/*
         binding.checkBoxVertical.setOnCheckedChangeListener{ _, isChecked ->
             if (isChecked){
                 currentRules++
@@ -126,14 +130,17 @@ class SettingsActivity : AppCompatActivity() {
             updateRules(currentRules)
         }
 
-    }
 
+ */
+    }
     private fun updateSoundLevel(value:Int){
        with(getSharedPreferences(
            getString(R.string.preference_file_key),MODE_PRIVATE).edit()){
            putInt(PREF_SOUND_VALUE, value)
            apply()
        }
+
+        setResult(RESULT_OK)
     }
 
     private fun updateLevel(level: Int){
@@ -142,6 +149,7 @@ class SettingsActivity : AppCompatActivity() {
             putInt(PREF_LEVEL, level)
             apply()
         }
+        setResult(RESULT_OK)
     }
     private fun updateRules(rules:Int){
         with(getSharedPreferences(
@@ -149,13 +157,15 @@ class SettingsActivity : AppCompatActivity() {
             putInt(PREF_RULES, rules)
             apply()
         }
+
+        setResult(RESULT_OK)
     }
 
-    private fun getSettingsInfo(): SettingsInfo{
+    private fun getSettingsInfo(): SettingsInfo {
         with(getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE)){
-            val soundValue = getInt(PREF_SOUND_VALUE, 0)
+            val soundValue = getInt(PREF_SOUND_VALUE, 50)
             val level = getInt(PREF_LEVEL, 0)
-            val rules = getInt(PREF_RULES, 0)
+            val rules = getInt(PREF_RULES, 7)
 
             return SettingsInfo(soundValue, level, rules)
         }

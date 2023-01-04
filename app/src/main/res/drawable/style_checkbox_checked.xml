@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape
@@ -18,8 +17,8 @@
     </item>
     <item
         android:drawable="@drawable/ic_check"
-        android:width="36dp"
-        android:height="36dp"
+        android:width="40dp"
+        android:height="40dp"
         android:gravity="center">
     </item>
 </layer-list>
