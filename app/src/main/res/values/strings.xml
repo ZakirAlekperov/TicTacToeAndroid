@@ -4,4 +4,15 @@
     <string name="title_continue_game">Продолжить игру</string>
     <string name="title_setting_game">Настройки</string>
     <string name="title_save_and_exit">Сохранить и выйти</string>
+
+    <string name="preference_file_key">com.zakiralekperov.android.tictactoe.file_key</string>
+
+    <string-array name="game_level">
+        <item>ЛЕГКО</item>
+        <item>НОРМАЛЬНО</item>
+        <item>СЛОЖНО</item>
+    </string-array>
+    <string name="dialog_status_win">Вы выиграли!</string>
+    <string name="dialog_status_lose">Вы проиграли!</string>
+    <string name="dialog_status_draw">Ничья!</string>
 </resources>
