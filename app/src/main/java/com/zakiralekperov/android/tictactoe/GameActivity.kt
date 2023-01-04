@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
@@ -16,6 +17,8 @@ class GameActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGameBinding
     private lateinit var gameField: Array<Array<String>>
+    private lateinit var settingsInfo: SettingsActivity.SettingsInfo
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +71,29 @@ class GameActivity : AppCompatActivity() {
         }else{
             initGameField()
         }
+
+        settingsInfo = getSettingsInfo()
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.minus)
+        mediaPlayer.isLooping = true
+        setVolumeMediaPlayer(settingsInfo.soundValue)
+
+        mediaPlayer.start()
+    }
+
+    private fun setVolumeMediaPlayer(soundValue: Int){
+        val volume = soundValue/100.0
+        mediaPlayer.setVolume(volume.toFloat(), volume.toFloat())
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mediaPlayer.release()
     }
 
     private fun initGameField(){
@@ -134,6 +160,14 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun makeStepOfAI(){
+        when(settingsInfo.level){
+            0->makeStepOfAIEasyLevel()
+            1 -> makeStepOfAINormalLevel()
+            2 -> makeStepOfAIHardLevel()
+        }
+    }
+
+    private fun makeStepOfAIEasyLevel(){
         var randRow = 0
         var randColumn = 0
 
@@ -143,7 +177,14 @@ class GameActivity : AppCompatActivity() {
         }while (!isEmptyField(randRow,randColumn))
 
         makeStep(randRow,randColumn, "0")
+    }
 
+    private fun makeStepOfAINormalLevel() {
+        TODO("Not yet implemented")
+    }
+
+    private fun makeStepOfAIHardLevel() {
+        TODO("Not yet implemented")
     }
 
     private fun checkGameField(row: Int, column: Int, symbol: String): StatusInfo{
@@ -163,10 +204,54 @@ class GameActivity : AppCompatActivity() {
             else if(gameField[i][size-i-1] == symbol)
                 rightDiagonal++
         }
-        return if (column == size || row ==size || leftDiagonal == size || rightDiagonal ==size)
-            StatusInfo(true, symbol)
-        else
-            StatusInfo(false, "")
+
+       return when(settingsInfo.rules){
+            1 -> {
+                return if (column == size)
+                    StatusInfo(true, symbol)
+                else
+                    StatusInfo(false, "")
+            }
+
+            2 -> {
+                return if (row ==size)
+                    StatusInfo(true, symbol)
+                else
+                    StatusInfo(false, "")
+            }
+            3 -> {
+                return if (column == size || row ==size )
+                    StatusInfo(true, symbol)
+                else
+                    StatusInfo(false, "")
+            }
+            4 -> {
+                return if (leftDiagonal == size || rightDiagonal ==size)
+                    StatusInfo(true, symbol)
+                else
+                    StatusInfo(false, "")
+            }
+            5 -> {
+                return if (column == size || leftDiagonal == size || rightDiagonal ==size)
+                    StatusInfo(true, symbol)
+                else
+                    StatusInfo(false, "")
+            }
+            6 -> {
+                return if ( row ==size || leftDiagonal == size || rightDiagonal ==size)
+                    StatusInfo(true, symbol)
+                else
+                    StatusInfo(false, "")
+            }
+            7 ->{
+                return if (column == size || row ==size || leftDiagonal == size || rightDiagonal ==size)
+                    StatusInfo(true, symbol)
+                else
+                    StatusInfo(false, "")
+            }
+           else -> StatusInfo(false, "")
+        }
+
 
     }
 
@@ -228,6 +313,9 @@ class GameActivity : AppCompatActivity() {
             dialog.hide()
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
+
+            settingsInfo = getSettingsInfo()
+            setVolumeMediaPlayer(settingsInfo.soundValue)
         }
 
         toExit.setOnClickListener{
@@ -277,6 +365,16 @@ class GameActivity : AppCompatActivity() {
             strings.forEachIndexed { indexColumn, s ->
                 makeStep(indexRow, indexColumn, this.gameField[indexRow][indexColumn])
             }
+        }
+    }
+
+    private fun getSettingsInfo(): SettingsActivity.SettingsInfo {
+        with(getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE)){
+            val soundValue = getInt(SettingsActivity.PREF_SOUND_VALUE, 0)
+            val level = getInt(SettingsActivity.PREF_LEVEL, 0)
+            val rules = getInt(SettingsActivity.PREF_RULES, 0)
+
+            return SettingsActivity.SettingsInfo(soundValue, level, rules)
         }
     }
 
