@@ -1,181 +1,179 @@
-package com.zakiralekperov.android.tictactoe.ui
+package my.tick.tack.toe
 
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
-import androidx.appcompat.app.AppCompatActivity
 import com.zakiralekperov.android.tictactoe.R
 import com.zakiralekperov.android.tictactoe.databinding.ActivitySettingsBinding
 
+
+const val PREF_SOUND = "my.tick_tac_toe.SOUND"
+const val PREF_LEVEL = "my.tick_tac_toe.LEVEL"
+const val PREF_RULES = "my.tick_tac_toe.RULES"
+
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivitySettingsBinding
+    private lateinit var settingsBinding: ActivitySettingsBinding
 
-    private var currentSoundValue = 0
-    private var currentLevel = 0
-    private var currentRules = 0
+    private var currentLevel : Int = 0
+    private var currentVolumeSound: Int = 0
+    private var currentRules: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        val data = getSettingsInfo()
+        settingsBinding = ActivitySettingsBinding.inflate(layoutInflater)
 
-        currentSoundValue = data.soundValue
-        currentLevel =data.level
-        currentRules = data.rules
+        val currentSettings = getCurrentSettings()
 
-        when(currentRules){
-            1 -> binding.checkBoxVertical.isChecked = true
-            2 -> binding.checkBoxHorizontal.isChecked = true
+        currentLevel = currentSettings.level
+        currentVolumeSound = currentSettings.sound
+        currentRules = currentSettings.rules
+
+        if(currentLevel == 0){
+            settingsBinding.prevLevel.visibility = View.INVISIBLE
+        } else if (currentLevel == 2) {
+            settingsBinding.nextLevel.visibility = View.INVISIBLE
+        }
+
+        settingsBinding.infoLevel.text = resources.getStringArray(R.array.game_level)[currentLevel]
+        settingsBinding.soundBar.progress = currentVolumeSound
+
+        when(currentSettings.rules){
+            1 -> settingsBinding.checkBoxHorizontal.isChecked = true
+            2 -> settingsBinding.checkBoxVertical.isChecked = true
             3 -> {
-                binding.checkBoxVertical.isChecked = true
-                binding.checkBoxHorizontal.isChecked = true
+                settingsBinding.checkBoxHorizontal.isChecked = true
+                settingsBinding.checkBoxVertical.isChecked = true
             }
-            4 -> binding.checkBoxDiagonal.isChecked = true
+            4 -> settingsBinding.checkBoxDiagonal.isChecked = true
             5 -> {
-                binding.checkBoxVertical.isChecked = true
-                binding.checkBoxDiagonal.isChecked = true
+                settingsBinding.checkBoxDiagonal.isChecked = true
+                settingsBinding.checkBoxHorizontal.isChecked = true
             }
             6 -> {
-                binding.checkBoxHorizontal.isChecked = true
-                binding.checkBoxDiagonal.isChecked = true
+                settingsBinding.checkBoxDiagonal.isChecked = true
+                settingsBinding.checkBoxVertical.isChecked = true
             }
-            7 ->{
-                binding.checkBoxVertical.isChecked = true
-                binding.checkBoxHorizontal.isChecked = true
-                binding.checkBoxDiagonal.isChecked = true
+            7 -> {
+                settingsBinding.checkBoxHorizontal.isChecked = true
+                settingsBinding.checkBoxVertical.isChecked = true
+                settingsBinding.checkBoxDiagonal.isChecked = true
             }
         }
 
-        if(currentLevel ==0){
-            binding.prevLevel.visibility = View.INVISIBLE
-        }else if(currentLevel ==2){
-            binding.nextLevel.visibility = View.INVISIBLE
+        settingsBinding.prevLevel.setOnClickListener {
+            currentLevel--
+
+            if(currentLevel == 0){
+                settingsBinding.prevLevel.visibility = View.INVISIBLE
+            } else if (currentLevel == 1) {
+                settingsBinding.nextLevel.visibility = View.VISIBLE
+            }
+
+            updateLevel(currentLevel)
+            settingsBinding.infoLevel.text = resources.getStringArray(R.array.game_level)[currentLevel]
         }
 
-        binding.infoLevel.text = resources.getStringArray(R.array.game_level)[currentLevel]
-        binding.soundBar.progress  = currentSoundValue
-        binding.toBack.setOnClickListener{
+        settingsBinding.nextLevel.setOnClickListener {
+            currentLevel++
+
+            if(currentLevel == 2){
+                settingsBinding.nextLevel.visibility = View.INVISIBLE
+            } else if (currentLevel == 1) {
+                settingsBinding.prevLevel.visibility = View.VISIBLE
+            }
+
+            updateLevel(currentLevel)
+            settingsBinding.infoLevel.text = resources.getStringArray(R.array.game_level)[currentLevel]
+        }
+
+        settingsBinding.soundBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
+                currentVolumeSound = progress
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+                updateVolumeSound(currentVolumeSound)
+            }
+
+        })
+
+        settingsBinding.checkBoxHorizontal.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                currentRules += 1
+            } else {
+                currentRules -= 1
+            }
+
+            updateRules(currentRules)
+        }
+
+        settingsBinding.checkBoxVertical.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                currentRules += 2
+            } else {
+                currentRules -= 2
+            }
+
+            updateRules(currentRules)
+        }
+
+        settingsBinding.checkBoxDiagonal.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                currentRules += 4
+            } else {
+                currentRules -= 4
+            }
+
+            updateRules(currentRules)
+        }
+
+        settingsBinding.toBack.setOnClickListener {
+            setResult(RESULT_OK)
             onBackPressed()
         }
 
-        binding.prevLevel.setOnClickListener{
-            currentLevel--
-
-            if(currentLevel ==0){
-                binding.prevLevel.visibility = View.INVISIBLE
-            }else if(currentLevel ==1){
-                binding.nextLevel.visibility = View.VISIBLE
-            }
-
-            binding.infoLevel.text = resources.getStringArray(R.array.game_level)[currentLevel]
-
-            updateLevel(currentLevel)
-        }
-
-
-        binding.nextLevel.setOnClickListener{
-            currentLevel++
-
-            if(currentLevel ==1){
-                binding.prevLevel.visibility = View.VISIBLE
-            }else if(currentLevel ==2){
-                binding.nextLevel.visibility = View.INVISIBLE
-            }
-
-            binding.infoLevel.text = resources.getStringArray(R.array.game_level)[currentLevel]
-
-            updateLevel(currentLevel)
-        }
-
-
-        binding.soundBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                currentSoundValue = progress
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-               // updateSoundLevel(currentSoundValue)
-            }
-        })
-/*
-        binding.checkBoxVertical.setOnCheckedChangeListener{ _, isChecked ->
-            if (isChecked){
-                currentRules++
-            }else{
-                currentLevel--
-            }
-            updateRules(currentRules)
-        }
-        binding.checkBoxHorizontal.setOnCheckedChangeListener{ _, isChecked ->
-            if (isChecked){
-                currentRules+=2
-            }else{
-                currentLevel-=2
-            }
-            updateRules(currentRules)
-        }
-        binding.checkBoxDiagonal.setOnCheckedChangeListener{ _, isChecked ->
-            if (isChecked){
-                currentRules+=4
-            }else{
-                currentLevel-=4
-            }
-            updateRules(currentRules)
-        }
-
-
- */
+        setContentView(settingsBinding.root)
     }
-    private fun updateSoundLevel(value:Int){
-       with(getSharedPreferences(
-           getString(R.string.preference_file_key),MODE_PRIVATE).edit()){
-           putInt(PREF_SOUND_VALUE, value)
-           apply()
-       }
 
+    private fun updateVolumeSound(volume: Int){
+        getSharedPreferences("game", MODE_PRIVATE).edit().apply{
+            putInt(PREF_SOUND, volume)
+            apply()
+        }
         setResult(RESULT_OK)
     }
 
     private fun updateLevel(level: Int){
-        with(getSharedPreferences(
-            getString(R.string.preference_file_key),MODE_PRIVATE).edit()){
+        getSharedPreferences("game", MODE_PRIVATE).edit().apply {
             putInt(PREF_LEVEL, level)
             apply()
         }
         setResult(RESULT_OK)
     }
-    private fun updateRules(rules:Int){
-        with(getSharedPreferences(
-            getString(R.string.preference_file_key),MODE_PRIVATE).edit()){
+
+    private fun updateRules(rules: Int){
+        getSharedPreferences("game", MODE_PRIVATE).edit().apply {
             putInt(PREF_RULES, rules)
             apply()
         }
-
         setResult(RESULT_OK)
     }
 
-    private fun getSettingsInfo(): SettingsInfo {
-        with(getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE)){
-            val soundValue = getInt(PREF_SOUND_VALUE, 50)
-            val level = getInt(PREF_LEVEL, 0)
+    private fun getCurrentSettings(): SettingsInfo {
+        this.getSharedPreferences("game", MODE_PRIVATE).apply {
+
+            val sound = getInt(PREF_SOUND, 100)
+            val level = getInt(PREF_LEVEL, 1)
             val rules = getInt(PREF_RULES, 7)
 
-            return SettingsInfo(soundValue, level, rules)
+            return SettingsInfo(sound, level, rules)
         }
     }
 
-    data class SettingsInfo(val soundValue: Int, val level: Int, val rules: Int)
-
-    companion object{
-        const val PREF_SOUND_VALUE = "pref_sound_value"
-        const val PREF_LEVEL = "pref_level"
-        const val PREF_RULES = "pref_rules"
-    }
+    data class SettingsInfo(val sound: Int, val level: Int, val rules: Int)
 }
