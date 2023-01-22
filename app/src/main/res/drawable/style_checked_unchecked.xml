@@ -8,7 +8,7 @@
     <solid
         android:color="@color/white"/>
     <stroke
-        android:color="@color/brown"
+        android:color="@color/blue"
         android:width="4dp"/>
     <corners
         android:radius="8dp"/>

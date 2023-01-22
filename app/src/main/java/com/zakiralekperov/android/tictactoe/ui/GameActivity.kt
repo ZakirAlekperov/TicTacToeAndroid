@@ -1,4 +1,4 @@
-package my.tick.tack.toe
+package com.zakiralekperov.android.tictactoe.ui
 
 import android.app.Dialog
 import android.content.Intent
@@ -7,14 +7,22 @@ import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.zakiralekperov.android.tictactoe.R
+import com.zakiralekperov.android.tictactoe.constant.GameActivityGonstant.BOT_SYMBOL
+import com.zakiralekperov.android.tictactoe.constant.GameActivityGonstant.PLAYER_SYMBOL
+import com.zakiralekperov.android.tictactoe.constant.GameActivityGonstant.POPUP_MENU
+import com.zakiralekperov.android.tictactoe.constant.GameActivityGonstant.STATUS_DRAW
+import com.zakiralekperov.android.tictactoe.constant.GameActivityGonstant.STATUS_WIN_BOT
+import com.zakiralekperov.android.tictactoe.constant.GameActivityGonstant.STATUS_WIN_PLAYER
+import com.zakiralekperov.android.tictactoe.constant.GameActivityGonstant.scores
+import com.zakiralekperov.android.tictactoe.constant.MainActivityConstant.EXTRA_GAME_FIELD
+import com.zakiralekperov.android.tictactoe.constant.MainActivityConstant.EXTRA_TIME
 import com.zakiralekperov.android.tictactoe.databinding.ActivityGameBinding
-import com.zakiralekperov.android.tictactoe.ui.EXTRA_GAME_FIELD
-import com.zakiralekperov.android.tictactoe.ui.EXTRA_TIME
 
 
 class GameActivity : AppCompatActivity() {
@@ -28,6 +36,7 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityGameBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         binding.toGameClose.setOnClickListener {
             onBackPressed()
@@ -37,60 +46,12 @@ class GameActivity : AppCompatActivity() {
             showPopupMenu()
         }
 
-        binding.cell11.setOnClickListener {
-            makeStepToUser(0, 0)
-        }
+        setCellsOnClickListeners()
+        showSelectGameRules()
+        isRestartGame()
+        mediaPlayerOnStart()
 
-        binding.cell12.setOnClickListener {
-            makeStepToUser(0, 1)
-        }
-
-        binding.cell13.setOnClickListener {
-            makeStepToUser(0, 2)
-        }
-
-        binding.cell21.setOnClickListener {
-            makeStepToUser(1, 0)
-        }
-
-        binding.cell22.setOnClickListener {
-            makeStepToUser(1, 1)
-        }
-
-        binding.cell23.setOnClickListener {
-            makeStepToUser(1, 2)
-        }
-
-        binding.cell31.setOnClickListener {
-            makeStepToUser(2, 0)
-        }
-
-        binding.cell32.setOnClickListener {
-            makeStepToUser(2, 1)
-        }
-
-        binding.cell33.setOnClickListener {
-            makeStepToUser(2, 2)
-        }
-
-        setContentView(binding.root)
-
-        val time = intent.getLongExtra(EXTRA_TIME, 0L)
-        val gameField = intent.getStringExtra(EXTRA_GAME_FIELD)
-
-        if (gameField != null && time != 0L && gameField != "") {
-            restartGame(time, gameField)
-        } else {
-            initGameField()
-        }
-
-        mediaPlayer = MediaPlayer.create(this, R.raw.minus)
-        mediaPlayer.isLooping = true
-        val settingsInfo = getCurrentSettings()
-        setVolumeMediaPlayer(settingsInfo.sound)
-
-        binding.chronometr.start()
-        mediaPlayer.start()
+        binding.chronometer.start()
     }
 
     override fun onDestroy() {
@@ -111,7 +72,7 @@ class GameActivity : AppCompatActivity() {
                 val settingsInfo = getCurrentSettings()
                 setVolumeMediaPlayer(settingsInfo.sound)
 
-                binding.chronometr.start()
+                binding.chronometer.start()
                 mediaPlayer.start()
             }
         }
@@ -124,7 +85,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun restartGame(time: Long, gameField: String) {
-        binding.chronometr.base = SystemClock.elapsedRealtime() - time
+        binding.chronometer.base = SystemClock.elapsedRealtime() - time
 
         this.gameField = arrayOf()
 
@@ -218,7 +179,7 @@ class GameActivity : AppCompatActivity() {
         var bestScore = Double.NEGATIVE_INFINITY
         var moveCell = CellGameField(0, 0)
 
-        var board = gameField.map { it.clone() }.toTypedArray()
+        val board = gameField.map { it.clone() }.toTypedArray()
 
         board.forEachIndexed { indexRow, columns ->
             columns.forEachIndexed { indexColumn, cell ->
@@ -243,7 +204,7 @@ class GameActivity : AppCompatActivity() {
         var bestScore = Double.NEGATIVE_INFINITY
         var moveCell = CellGameField(0, 0)
 
-        var board = gameField.map { it.clone() }.toTypedArray()
+        val board = gameField.map { it.clone() }.toTypedArray()
 
         board.forEachIndexed { indexRow, columns ->
             columns.forEachIndexed { indexColumn, cell ->
@@ -449,8 +410,11 @@ class GameActivity : AppCompatActivity() {
         return true
     }
 
+    /**
+     * Отображает статус игры при ее завершении
+     */
     private fun showGameStatus(status: Int) {
-        binding.chronometr.stop()
+        binding.chronometer.stop()
 
         val dialog = Dialog(this@GameActivity)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.argb(50, 0, 0, 0)))
@@ -482,10 +446,13 @@ class GameActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    /**
+     * Показывает всплывающее меню настроек
+     */
     private fun showPopupMenu() {
-        binding.chronometr.stop()
+        binding.chronometer.stop()
 
-        val elapsedMillis = SystemClock.elapsedRealtime() - binding.chronometr.base
+        val elapsedMillis = SystemClock.elapsedRealtime() - binding.chronometer.base
 
         val dialog = Dialog(this@GameActivity)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.argb(50, 0, 0, 0)))
@@ -494,8 +461,8 @@ class GameActivity : AppCompatActivity() {
 
         dialog.findViewById<TextView>(R.id.dialog_continue).setOnClickListener {
             dialog.hide()
-            binding.chronometr.base = SystemClock.elapsedRealtime() - elapsedMillis
-            binding.chronometr.start()
+            binding.chronometer.base = SystemClock.elapsedRealtime() - elapsedMillis
+            binding.chronometer.start()
         }
         dialog.findViewById<TextView>(R.id.dialog_settings).setOnClickListener {
             dialog.hide()
@@ -511,17 +478,117 @@ class GameActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    companion object {
-        const val STATUS_WIN_PLAYER = 1
-        const val STATUS_WIN_BOT = 2
-        const val STATUS_DRAW = 3
-        const val POPUP_MENU = 235
+    /**
+        Показывает выбранные правила игры.
+        Делает видимыми выбраные и скрывает(Gone) остальные
+     **/
+    private fun showSelectGameRules(){
 
-        val scores = hashMapOf(
-            Pair(STATUS_WIN_PLAYER, -1.0), Pair(STATUS_WIN_BOT, 1.0), Pair(STATUS_DRAW, 0.0)
-        )
+        when(getCurrentSettings().rules){
+            1 -> {
+                binding.rull1.visibility = View.VISIBLE
+                binding.rull2.visibility = View.GONE
+                binding.rull3.visibility = View.GONE
+            }
+            2 -> {
+                binding.rull1.visibility = View.GONE
+                binding.rull2.visibility = View.VISIBLE
+                binding.rull3.visibility = View.GONE
+            }
+            3 -> {
+                binding.rull1.visibility = View.VISIBLE
+                binding.rull2.visibility = View.VISIBLE
+                binding.rull3.visibility = View.GONE
+            }
+            4 -> {
+                binding.rull1.visibility = View.GONE
+                binding.rull2.visibility = View.GONE
+                binding.rull3.visibility = View.VISIBLE
+            }
+            5 -> {
+                binding.rull1.visibility = View.VISIBLE
+                binding.rull2.visibility = View.GONE
+                binding.rull3.visibility = View.VISIBLE
+            }
+            6 -> {
+                binding.rull1.visibility = View.GONE
+                binding.rull2.visibility = View.VISIBLE
+                binding.rull3.visibility = View.VISIBLE
+            }
+            else -> {
+                binding.rull1.visibility = View.VISIBLE
+                binding.rull2.visibility = View.VISIBLE
+                binding.rull3.visibility = View.VISIBLE
+            }
 
-        const val PLAYER_SYMBOL = "X"
-        const val BOT_SYMBOL = "0"
+        }
+    }
+
+    /**
+        Устанавливает обработчики событий для игрового поля
+     **/
+    private fun setCellsOnClickListeners(){
+        binding.cell11.setOnClickListener {
+            makeStepToUser(0, 0)
+        }
+
+        binding.cell12.setOnClickListener {
+            makeStepToUser(0, 1)
+        }
+
+        binding.cell13.setOnClickListener {
+            makeStepToUser(0, 2)
+        }
+
+        binding.cell21.setOnClickListener {
+            makeStepToUser(1, 0)
+        }
+
+        binding.cell22.setOnClickListener {
+            makeStepToUser(1, 1)
+        }
+
+        binding.cell23.setOnClickListener {
+            makeStepToUser(1, 2)
+        }
+
+        binding.cell31.setOnClickListener {
+            makeStepToUser(2, 0)
+        }
+
+        binding.cell32.setOnClickListener {
+            makeStepToUser(2, 1)
+        }
+
+        binding.cell33.setOnClickListener {
+            makeStepToUser(2, 2)
+        }
+    }
+
+    /**
+     * Перезапускает или начинает новую игру
+     */
+    private fun isRestartGame(){
+        val time = intent.getLongExtra(EXTRA_TIME, 0L)
+        val gameField = intent.getStringExtra(EXTRA_GAME_FIELD)
+
+        if (gameField != null && time != 0L && gameField != "") {
+            restartGame(time, gameField)
+        } else {
+            initGameField()
+        }
+    }
+
+    /**
+     * Запускает медиаплейер
+     */
+    private fun mediaPlayerOnStart(){
+        mediaPlayer = MediaPlayer.create(this, R.raw.minus)
+        mediaPlayer.isLooping = true
+        val settingsInfo = getCurrentSettings()
+        setVolumeMediaPlayer(settingsInfo.sound)
+
+
+        mediaPlayer.start()
     }
 }

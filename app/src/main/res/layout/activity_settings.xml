@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/yellow"
+        android:background="@drawable/back_activity"
         tools:context=".ui.SettingsActivity">
 
 
@@ -20,8 +20,8 @@
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="Легко"
-            android:textColor="@color/brown"
+            android:text="@string/easy"
+            android:textColor="@color/text_color"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="@+id/prev_level"
             app:layout_constraintEnd_toStartOf="@+id/next_level"
@@ -30,14 +30,17 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
             android:fontFamily="@font/roboto_bold"
             android:text="@string/title_setting_game"
-            android:textColor="@color/brown"
+            android:textAlignment="center"
+            android:textColor="@color/text_color"
             android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,8 +51,8 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="Звук"
-            android:textColor="@color/brown"
+            android:text="@string/Sound"
+            android:textColor="@color/text_color"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -76,8 +79,8 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="Сложность"
-            android:textColor="@color/brown"
+            android:text="@string/difficult"
+            android:textColor="@color/text_color"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/soundBar" />
@@ -89,8 +92,8 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="Правила игры"
-            android:textColor="@color/brown"
+            android:text="@string/game_rules"
+            android:textColor="@color/text_color"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/prev_level" />
@@ -122,13 +125,14 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
             android:button="@drawable/style_checkbox"
-            android:checked="false"
+            android:checked="true"
             android:paddingLeft="8dp"
-            android:text="Ряд по вертикали"
-            android:textColor="@color/brown"
+            android:text="@string/vertical_row"
+            android:textColor="@color/text_color"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5"
+            app:useMaterialThemeColors="false"
             tools:fontFamily="@font/roboto_medium" />
 
         <CheckBox
@@ -140,11 +144,12 @@
             android:button="@drawable/style_checkbox"
             android:checked="false"
             android:paddingLeft="8dp"
-            android:text="Ряд по горизонтали"
-            android:textColor="@color/brown"
+            android:text="@string/horizontal_row"
+            android:textColor="@color/text_color"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/checkBox_vertical"
+            app:useMaterialThemeColors="false"
             tools:fontFamily="@font/roboto_medium" />
 
         <CheckBox
@@ -155,11 +160,12 @@
             android:layout_marginTop="16dp"
             android:button="@drawable/style_checkbox"
             android:paddingLeft="8dp"
-            android:text="Ряд по диагонали"
-            android:textColor="@color/brown"
+            android:text="@string/diagonal_row"
+            android:textColor="@color/text_color"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/checkBox_horizontal"
+            app:useMaterialThemeColors="false"
             tools:fontFamily="@font/roboto_medium" />
 
         <TextView
@@ -171,7 +177,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="32dp"
-            android:text="Вернуться"
+            android:text="@string/toBack"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

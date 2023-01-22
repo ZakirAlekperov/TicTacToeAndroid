@@ -14,10 +14,13 @@
         android:theme="@style/Theme.TicTacToe"
         tools:targetApi="31">
         <activity
-            android:name="my.tick.tack.toe.GameActivity"
+            android:name=".ui.SelectActivity"
             android:exported="false" />
         <activity
-            android:name="my.tick.tack.toe.SettingsActivity"
+            android:name=".ui.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.GameActivity"
             android:exported="false" />
         <activity
             android:name=".ui.MainActivity"

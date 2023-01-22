@@ -1,18 +1,30 @@
 <resources>
-    <string name="app_name">TicTacToe</string>
-    <string name="title_new_game">Новая игра</string>
-    <string name="title_continue_game">Продолжить игру</string>
-    <string name="title_setting_game">Настройки</string>
-    <string name="title_save_and_exit">Сохранить и выйти</string>
+    <string name="app_name" translatable="false">TicTacToe</string>
+    <string name="title_new_game">New game</string>
+    <string name="title_continue_game">Continue</string>
+    <string name="title_setting_game">Settings</string>
+    <string name="title_save_and_exit">Save and exit</string>
 
-    <string name="preference_file_key">com.zakiralekperov.android.tictactoe.file_key</string>
+    <string name="preference_file_key" translatable="false">com.zakiralekperov.android.tictactoe.file_key</string>
 
     <string-array name="game_level">
-        <item>ЛЕГКО</item>
-        <item>НОРМАЛЬНО</item>
-        <item>СЛОЖНО</item>
+        <item>EASY</item>
+        <item>NORMAL</item>
+        <item>HARD</item>
     </string-array>
-    <string name="dialog_status_win">Вы выиграли!</string>
-    <string name="dialog_status_lose">Вы проиграли!</string>
-    <string name="dialog_status_draw">Ничья!</string>
+    <string name="dialog_status_win">You WIN!</string>
+    <string name="dialog_status_lose">You LOSE!</string>
+    <string name="dialog_status_draw">DRAW!</string>
+    <string name="easy">Easy</string>
+    <string name="Sound">Sound</string>
+    <string name="difficult">Difficult</string>
+    <string name="game_rules">Game rules</string>
+    <string name="vertical_row">Vertical row</string>
+    <string name="toBack">Back</string>
+    <string name="horizontal_row">Horizontal row</string>
+    <string name="diagonal_row">Dagonal row</string>
+    <string name="restart">Restart</string>
+    <string name="choose_type_game">Choose the type of game</string>
+    <string name="vs_comp">VS computer</string>
+    <string name="vs_human">VS human</string>
 </resources>

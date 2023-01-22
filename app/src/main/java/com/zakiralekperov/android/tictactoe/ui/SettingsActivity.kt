@@ -1,4 +1,4 @@
-package my.tick.tack.toe
+package com.zakiralekperov.android.tictactoe.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
