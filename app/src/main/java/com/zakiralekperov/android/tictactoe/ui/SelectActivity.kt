@@ -3,21 +3,42 @@ package com.zakiralekperov.android.tictactoe.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import com.zakiralekperov.android.tictactoe.R
+import android.util.Log
+import com.google.android.material.snackbar.Snackbar
+import com.zakiralekperov.android.tictactoe.databinding.ActivitySelectBinding
 
 class SelectActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySelectBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_select)
+        binding = ActivitySelectBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.vsBotButton.setOnClickListener {
+            gameVsBotStart()
+        }
+
+        binding.vsHumanButton.setOnClickListener {
+            gameVsHumanStart()
+        }
+
+        binding.toBack.setOnClickListener {
+            openMainActivity()
+        }
     }
 
-    fun vsCompButtonOnClick(view: View) {
+    private fun gameVsBotStart() {
         val intent = Intent(this, GameActivity::class.java)
         startActivity(intent)
     }
-    fun vsHumanButtonOnClick(view: View) {
-        val intent = Intent(this, GameActivity::class.java)
+
+    private fun gameVsHumanStart(){
+        Snackbar.make(binding.mainLayout, "Пока не реализованно", Snackbar.LENGTH_SHORT).show()
+    }
+    private fun openMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 }

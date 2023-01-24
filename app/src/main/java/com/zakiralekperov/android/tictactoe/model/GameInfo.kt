@@ -1,3 +1,3 @@
-package com.zakiralekperov.android.tictactoe.controller
+package com.zakiralekperov.android.tictactoe.model
 
 data class GameInfo(val time: Long, val gameField: String)

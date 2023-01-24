@@ -7,7 +7,6 @@ import android.widget.SeekBar
 import com.zakiralekperov.android.tictactoe.R
 import com.zakiralekperov.android.tictactoe.databinding.ActivitySettingsBinding
 
-
 const val PREF_SOUND = "my.tick_tac_toe.SOUND"
 const val PREF_LEVEL = "my.tick_tac_toe.LEVEL"
 const val PREF_RULES = "my.tick_tac_toe.RULES"
