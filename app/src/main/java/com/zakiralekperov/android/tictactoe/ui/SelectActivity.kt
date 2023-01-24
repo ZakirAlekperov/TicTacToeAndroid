@@ -35,6 +35,7 @@ class SelectActivity : AppCompatActivity() {
     }
 
     private fun gameVsHumanStart(){
+        //TODO Реализовать игру 1 на 1
         Snackbar.make(binding.mainLayout, "Пока не реализованно", Snackbar.LENGTH_SHORT).show()
     }
     private fun openMainActivity() {

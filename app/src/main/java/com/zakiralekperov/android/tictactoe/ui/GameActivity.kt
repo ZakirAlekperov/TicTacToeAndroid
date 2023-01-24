@@ -14,7 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.zakiralekperov.android.tictactoe.R
 import com.zakiralekperov.android.tictactoe.constant.MainActivityConstant.EXTRA_GAME_FIELD
 import com.zakiralekperov.android.tictactoe.constant.MainActivityConstant.EXTRA_TIME
+import com.zakiralekperov.android.tictactoe.constant.SettingsActivityConstant.PREF_LEVEL
+import com.zakiralekperov.android.tictactoe.constant.SettingsActivityConstant.PREF_RULES
+import com.zakiralekperov.android.tictactoe.constant.SettingsActivityConstant.PREF_SOUND
 import com.zakiralekperov.android.tictactoe.databinding.ActivityGameBinding
+import com.zakiralekperov.android.tictactoe.model.SettingsInfo
 
 
 class GameActivity : AppCompatActivity() {
@@ -351,14 +355,14 @@ class GameActivity : AppCompatActivity() {
         return STATUS_DRAW
     }
 
-    private fun getCurrentSettings(): SettingsActivity.SettingsInfo {
+    private fun getCurrentSettings(): SettingsInfo {
         this.getSharedPreferences("game", MODE_PRIVATE).apply {
 
             val sound = getInt(PREF_SOUND, 100)
             val level = getInt(PREF_LEVEL, 1)
             val rules = getInt(PREF_RULES, 7)
 
-            return SettingsActivity.SettingsInfo(sound, level, rules)
+            return SettingsInfo(sound, level, rules)
         }
     }
 
