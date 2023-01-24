@@ -1,7 +1,9 @@
 package com.zakiralekperov.android.tictactoe.ui
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import com.zakiralekperov.android.tictactoe.R
@@ -12,14 +14,13 @@ import com.zakiralekperov.android.tictactoe.constant.SettingsActivityConstant.PR
 import com.zakiralekperov.android.tictactoe.constant.SettingsActivityConstant.PREF_SOUND
 import com.zakiralekperov.android.tictactoe.databinding.ActivitySettingsBinding
 import com.zakiralekperov.android.tictactoe.model.SettingsInfo
-import com.zakiralekperov.android.tictactoe.ui.logic.Listeners
 
 
 class SettingsActivity : AppCompatActivity() {
 
     lateinit var settingsBinding: ActivitySettingsBinding
-    private lateinit var listeners: Listeners
 
+    val TAG = "Main"
     var currentDifficult = 0
     var currentVolume = 0
     var currentGameRules = 0
@@ -28,6 +29,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         settingsBinding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(settingsBinding.root)
+        Log.d(TAG, "лейаут настроек задан")
 
         setCurrentSettings()
 
@@ -36,10 +38,6 @@ class SettingsActivity : AppCompatActivity() {
         setRulesCheckBox()
 
         setOnClickListeners()
-
-
-
-
 
         settingsBinding.difficultLevel.text = resources.getStringArray(R.array.game_level)[currentDifficult]
         settingsBinding.soundBar.progress = currentVolume
@@ -70,12 +68,16 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setVisiblePrevLevelButton() {
-        if (currentDifficult == EASY_DIFFICULT)
+        if (currentDifficult == EASY_DIFFICULT) {
             settingsBinding.prevLevel.visibility = View.INVISIBLE
+            settingsBinding.nextLevel.visibility = View.VISIBLE
+        }
     }
     private fun setVisibleNextLevelButton(){
-        if (currentDifficult == HARD_DIFFICULT)
+        if (currentDifficult == HARD_DIFFICULT) {
+            settingsBinding.prevLevel.visibility = View.VISIBLE
             settingsBinding.nextLevel.visibility = View.INVISIBLE
+        }
     }
 
     private fun setRulesCheckBox(){
@@ -104,13 +106,103 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setOnClickListeners(){
-        listeners.prevLevelOnClick()
-        listeners.nextLevelOnClick()
-        listeners.soundBarChange()
-        listeners.checkBoxHorizontalChange()
-        listeners.checkBoxVerticalChange()
-        listeners.checkBoxDiagonalChange()
-        listeners.toBackOnClick()
+        prevLevelOnClick()
+        nextLevelOnClick()
+        soundBarChange()
+        checkBoxHorizontalChange()
+        checkBoxVerticalChange()
+        checkBoxDiagonalChange()
+        toBackOnClick()
+    }
+
+    fun prevLevelOnClick(){
+            settingsBinding.prevLevel.setOnClickListener {
+
+                currentDifficult--
+
+                if (currentDifficult == 0) {
+                    settingsBinding.prevLevel.visibility = View.INVISIBLE
+                } else if (currentDifficult == 1) {
+                    settingsBinding.nextLevel.visibility = View.VISIBLE
+                }
+
+                updateLevel(currentDifficult)
+                settingsBinding.difficultLevel.text =
+                    resources.getStringArray(R.array.game_level)[currentDifficult]
+            }
+
+
+    }
+
+    fun nextLevelOnClick(){
+            settingsBinding.nextLevel.setOnClickListener {
+                currentDifficult++
+
+                if (currentDifficult == 2) {
+                    settingsBinding.nextLevel.visibility = View.INVISIBLE
+                } else if (currentDifficult == 1) {
+                    settingsBinding.prevLevel.visibility = View.VISIBLE
+                }
+
+                updateLevel(currentDifficult)
+                settingsBinding.difficultLevel.text =
+                    resources.getStringArray(R.array.game_level)[currentDifficult]
+
+        }
+
+    }
+    fun toBackOnClick(){
+        settingsBinding.toBack.setOnClickListener {
+            setResult(Activity.RESULT_OK)
+            onBackPressed()
+        }
+    }
+
+    fun soundBarChange(){
+            settingsBinding.soundBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
+                    currentVolume = progress
+                }
+
+                override fun onStartTrackingTouch(p0: SeekBar?) {}
+
+                override fun onStopTrackingTouch(p0: SeekBar?) {
+                    updateVolumeSound(currentVolume)
+                }
+            })
+    }
+    fun checkBoxHorizontalChange(){
+            settingsBinding.checkBoxHorizontal.setOnCheckedChangeListener { _, isChecked ->
+                if(isChecked){
+                    currentGameRules += 1
+                } else {
+                    currentGameRules -= 1
+                }
+
+                updateRules(currentGameRules)
+            }
+    }
+    fun checkBoxVerticalChange(){
+            settingsBinding.checkBoxVertical.setOnCheckedChangeListener { _, isChecked ->
+                if(isChecked){
+                    currentGameRules += 2
+                } else {
+                    currentGameRules -= 2
+                }
+
+                updateRules(currentGameRules)
+            }
+    }
+    fun checkBoxDiagonalChange(){
+            settingsBinding.checkBoxDiagonal.setOnCheckedChangeListener { _, isChecked ->
+                if(isChecked){
+                    currentGameRules += 4
+                } else {
+                    currentGameRules -= 4
+                }
+
+                updateRules(currentGameRules)
+            }
     }
 
 

@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     fun toSettingsOnClick(view: View){
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
+        Log.d(TAG,"Настройки")
     }
 
     fun toNewGameOnClick(view: View){
